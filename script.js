@@ -1,17 +1,17 @@
-const gameBtn = document.getElementsByClassName("gameBtn");
+const gameBtn = document.getElementById("gameBtn");
 
 // Слушатели событий
 gameBtn.addEventListener("click",activeArea);
 
 function activeArea() {
-    const field = document.getElementsByName("field");
+    const field = document.getElementsByClassName("field");
     gameBtn.innerHTML = "ЗАВЕРШИТЬ ИГРУ";
 
     gameBtn.style.backgroundColor = "red";
 
-    for (let i = 0; i, field.length; i++){
+    for (let i = 0; i < field.length; i++){
         setInterval(() => {
             field[i].classList.add("active")
-        },20 * 1);
+        },20 * i);
     }
 }
