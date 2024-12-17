@@ -7,7 +7,7 @@ document
   .querySelector("#loginWrapper form")
   .addEventListener("submit", (event) => {
     event.preventDefault();
-    auth()
+    auth();
   });
 
 [...document.getElementsByClassName("point")].forEach((elem) => {
@@ -18,7 +18,7 @@ function addPoint(event) {
   let target = event.target;
   point = +target.innerHTML;
   const activeBtn = document.querySelector(".point.active");
-  if(activeBtn){
+  if (activeBtn) {
     activeBtn.classList.remove("active");
   }
 
@@ -54,7 +54,7 @@ async function startGame() {
 }
 
 async function stopGame() {
-  let response = await sendRequest("new_game", "POST", {
+  let response = await sendRequest("stop_game", "POST", {
     username: USERNAME,
     game_id,
   });
@@ -81,6 +81,68 @@ function activeArea() {
     setTimeout(() => {
       field[i].classList.add("active");
     }, 20 * i);
+    let row = Math.trunc(i / 10);
+    let column = i - row * 10;
+    field[i].setAttribute("data-row", row);
+    field[i].setAttribute("data-column", column);
+    field[i].addEventListener("click", makeStep);
+  }
+}
+
+async function makeStep(event) {
+  let target = event.target;
+  let row = +target.getAttribute("data-row");
+  let column = +target.getAttribute("data-column");
+  
+  try {
+    let response = await sendRequest("game_step", "POST", {
+      game_id,
+      row,
+      column,
+    });
+    updateArea(response.table)
+
+    if (response.error) {
+      alert(response.message);
+    } else {
+      if (response.status === "Ok") {
+
+      } else if (response.status === "Failed") {
+        alert("Вы проиграли")
+        gameBtn.innerHTML="ИГРАТЬ"
+        gameBtn.style.backgroundColor = "#66a663"
+        setTimeout(()=>resetField(),2000)
+      } else if (response.status === "Won") {
+        alert("Вы выйграли")
+        updateUserBalans()
+      }
+    }
+  } catch (error) {
+    console.log(`Неправельные данные ${error}`);
+  }
+}
+
+function updateArea(table) {
+  let fields = document.querySelectorAll(".field")
+  let a = 0
+  for (let i = 0; i < table.length; i++) {
+    let row = table[i];
+    for (let j = 0; j < row.length; j++) {
+      let cell = row[j];
+      let value = fields[a];
+      if (cell === "") {
+
+      } else if ((cell === 0)) {
+        value.classList.remove("active")
+      } else if ((cell == "BOMB")) {
+        value.classList.remove("active")
+        value.classList.add("bomb")
+      } else if (cell > 0) {
+        value.classList.remove("active")
+        value.innerHTML = cell
+      }
+      a++
+    }
   }
 }
 
@@ -131,13 +193,11 @@ async function updateUserBalans() {
   if (response.error) {
     alert(response.message);
     console.log(response);
-    
   } else {
     const user = document.querySelector("header span");
     user.innerHTML = `Пользователь ${response.username} с балансом ${response.balance}`;
   }
 }
-
 
 async function sendRequest(url, method, data) {
   url = `https://tg-api.tehnikum.school/tehnikum_course/minesweeper/${url}`;

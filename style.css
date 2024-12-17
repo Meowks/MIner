@@ -21,17 +21,28 @@ body{
 }
 
 #logo{
-    width: 80px;
-    height: 80px;
+    width: calc(75px + (80 - 75) * ((100vw - 390px) / (1280 - 390)));
+    height: calc(75px + (80 - 75) * ((100vw - 390px) / (1280 - 390)));
+    
+}
+h1{
+    font-size: 32px;
+    align-items: center;
+    
 }
 header{
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 20px;
     padding: 20px;
     border-radius: 20px;
     background-color: var(--light-purple);
-    margin-bottom: 20px;
+    margin-bottom: 20px;  
+     
+}
+header span{
+
 }
 
 .main{
@@ -57,9 +68,13 @@ header{
 }
 .field{
     background-color: var(--purple);
-    width: 30px;
-    height: 30px;
+    width: calc(25px + (30 - 25) * ((100vw - 390px) / (1280 - 390)));
+    height: calc(25px + (30 - 25) * ((100vw - 390px) / (1280 - 390)));
     border-radius: 4px;
+    font-size: 24px;
+    text-align: center;
+    line-height: 30px;
+    font-weight: bold;
 }
 .field.active{
     background-color: var(--lighter-purple);
@@ -143,4 +158,12 @@ h2{
     outline: none;
     background-color: var(--purple);
     font-size: 22px;
+}
+
+
+@media(max-width: 390px){
+    .field{
+        width: calc(16px + (25 - 16) * ((100vw - 320px) / (390 - 320)));
+        height: calc(16px + (25 - 16) * ((100vw - 320px) / (390 - 320)));
+    }
 }
